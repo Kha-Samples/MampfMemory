@@ -24,7 +24,35 @@ class Memory extends Game {
 		Loader.the.loadRoom("memory", loadingFinished);
 	}
 	
+	private var pairCount: Int;
+	private var completeCount: Int ;
+	
+	private function checkComplete(): Void {
+		++completeCount;
+		if (completeCount == pairCount) loadingFinished2();
+	}
+	
 	private function loadingFinished(): Void {
+		var xml = Xml.parse(Loader.the.getBlob("memory.xml").toString());
+		var pairs = xml.firstElement().elementsNamed("Memory").next().elementsNamed("Pair");
+		pairCount = 0;
+		completeCount = 0;
+		for (pair in pairs) {
+			++pairCount;
+		}
+		pairs = xml.firstElement().elementsNamed("Memory").next().elementsNamed("Pair");
+		for (pair in pairs) {
+			var img = pair.elementsNamed("Image").next();
+			var filename = img.firstChild().nodeValue;
+			var name = filename.substr(0, filename.length - 4);
+			Loader.the.loadImage("memory/food/" + filename, function(image: Image) {
+				Food.addImage(name, image);
+				checkComplete();
+			});
+		}
+	}
+	
+	private function loadingFinished2(): Void {	
 		Random.init(Std.int(Timer.stamp() * 1000));
 		back = Loader.the.getImage("memory/bg_pattern");
 		shadow = Loader.the.getImage("memory/shadow");
@@ -33,16 +61,12 @@ class Memory extends Game {
 		ClassPlate.init();
 		cards = new Array<Card>();
 		
-		var foodCount = 0;
-		var x = 100;
-		while (x < 1000) {
-			var y = 100;
-			while (y < 800) {
-				++foodCount;
-				y += 190;
-			}
-			x += 200;
-		}
+		var xml = Xml.parse(Loader.the.getBlob("memory.xml").toString());
+		var memoElement = xml.firstElement().elementsNamed("Memory").next();
+		
+		var rows = Std.parseInt(memoElement.get("rows"));
+		var columns = Std.parseInt(memoElement.get("column"));
+		var foodCount = rows * columns;
 		
 		var bigFoodPile = Food.all.copy();
 		var foodPile = new Array<Food>();
@@ -54,19 +78,17 @@ class Memory extends Game {
 			foodPile.push(food);
 		}
 		
-		x = 100;
-		while (x < 1000) {
-			var y = 100;
-			while (y < 800) {
+		for (xcount in 0...columns) {
+			var x = 100 + xcount * width / columns;
+			for (ycount in 0...rows) {
+				var y = 100 + ycount * height / rows;
 				var xx = x + Random.getUpTo(40) - 20;
 				var yy = y + Random.getUpTo(40) - 20;
 				var food = foodPile[Random.getUpTo(foodPile.length - 1)];
 				foodPile.remove(food);
 				cards.push(new Card(xx, yy, food));
 				//cards.push(new Card(xx, yy, Food.all[0]));
-				y += 190;
 			}
-			x += 200;
 		}
 		setInstance();
 		Configuration.setScreen(this);
