@@ -25,7 +25,12 @@ class Food {
 			var img = pair.elementsNamed("Image").next();
 			var name = img.firstChild().nodeValue;
 			name = name.substr(0, name.length - 4);
-			add(name, MampfColor.Green);
+			var health = pair.elementsNamed("Health").next().firstChild().nodeValue;
+			var color: MampfColor;
+			if (health == "Green") color = MampfColor.Green;
+			else if (health == "Yellow") color = MampfColor.Yellow;
+			else color = MampfColor.Red;
+			add(name, color);
 		}
 		/*
 		add("avokado",      MampfColor.Green);

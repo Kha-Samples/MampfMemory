@@ -2,6 +2,7 @@ package memory;
 
 import haxe.Timer;
 import kha.Configuration;
+import kha.FontStyle;
 import kha.Game;
 import kha.Image;
 import kha.Loader;
@@ -14,6 +15,9 @@ class Memory extends Game {
 	private var shadow: Image;
 	private var cards: Array<Card>;
 	private var dragger: FoodDragger;
+	private var errors: Int = 0;
+	private var healthErrors: Int = 0;
+	private var round: Int = 0;
 	
 	public function new() {
 		super("Memory", false);
@@ -25,7 +29,7 @@ class Memory extends Game {
 	}
 	
 	private var pairCount: Int;
-	private var completeCount: Int ;
+	private var completeCount: Int;
 	
 	private function checkComplete(): Void {
 		++completeCount;
@@ -52,6 +56,10 @@ class Memory extends Game {
 		}
 	}
 	
+	private var rows: Int;
+	private var columns: Int;
+	private var foodCount: Int;
+	
 	private function loadingFinished2(): Void {	
 		Random.init(Std.int(Timer.stamp() * 1000));
 		back = Loader.the.getImage("memory/bg_pattern");
@@ -64,10 +72,17 @@ class Memory extends Game {
 		var xml = Xml.parse(Loader.the.getBlob("memory.xml").toString());
 		var memoElement = xml.firstElement().elementsNamed("Memory").next();
 		
-		var rows = Std.parseInt(memoElement.get("rows"));
-		var columns = Std.parseInt(memoElement.get("column"));
-		var foodCount = rows * columns;
+		rows = Std.parseInt(memoElement.get("rows"));
+		columns = Std.parseInt(memoElement.get("column"));
+		foodCount = rows * columns;
 		
+		layCards();
+		
+		setInstance();
+		Configuration.setScreen(this);
+	}
+	
+	private function layCards(): Void {
 		var bigFoodPile = Food.all.copy();
 		var foodPile = new Array<Food>();
 		
@@ -90,8 +105,13 @@ class Memory extends Game {
 				//cards.push(new Card(xx, yy, Food.all[0]));
 			}
 		}
-		setInstance();
-		Configuration.setScreen(this);
+	}
+	
+	private function reset(): Void {
+		errors = 0;
+		healthErrors = 0;
+		round = 0;
+		layCards();
 	}
 	
 	override public function update(): Void {
@@ -122,6 +142,15 @@ class Memory extends Game {
 		
 		for (card in cards) card.render(painter);
 		dragger.render(painter);
+		if (gameover) {
+			painter.setColor(255, 255, 255);
+			var font = Loader.the.loadFont("Arial", new FontStyle(false, false, false), 55);
+			painter.setFont(font);
+			painter.drawString("Game Over", width / 2 - font.stringWidth("Game Over") / 2, height / 3 - font.getHeight() / 2);
+			var score = pairCount * 10 - errors * 1 - healthErrors * 2;
+			var scoreString = "Score: " + Std.string(score);
+			painter.drawString(scoreString, width / 2 - font.stringWidth(scoreString) / 2, height / 2 - font.getHeight() / 2);
+		}
 	}
 	
 	var clickedCard: Card = null;
@@ -129,12 +158,24 @@ class Memory extends Game {
 	var secondCard: Card = null;
 	var waiting: Int = 0;
 	var dragging = false;
+	var gameover = false;
 	
 	public function nextRound(): Void {
+		if (dragging) {
+			++round;
+			if (round == pairCount) {
+				gameover = true;
+			}
+		}
 		dragging = false;
 	}
 	
 	override public function mouseDown(x: Int, y: Int): Void {
+		if (gameover) {
+			reset();
+			gameover = false;
+			return;
+		}
 		if (dragging) {
 			dragger.mouseDown(x, y);
 			return;
@@ -149,8 +190,9 @@ class Memory extends Game {
 	}
 	
 	override public function mouseUp(x: Int, y: Int): Void {
+		if (gameover) return;
 		if (dragging) {
-			dragger.mouseUp(x, y);
+			healthErrors += dragger.mouseUp(x, y);
 			return;
 		}
 		if (waiting > 0) return;
@@ -174,9 +216,9 @@ class Memory extends Game {
 						else {
 							secondCard = card;
 							waiting = 80;
+							++errors;
 						}
 					}
-					
 					break;
 				}
 			}
@@ -184,6 +226,7 @@ class Memory extends Game {
 	}
 	
 	override public function mouseMove(x: Int, y: Int): Void {
+		if (gameover) return;
 		if (dragging) {
 			dragger.mouseMove(x, y);
 			return;

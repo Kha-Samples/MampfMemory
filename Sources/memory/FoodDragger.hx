@@ -156,14 +156,17 @@ class FoodDragger {
 	private var firstCloseStart: Vector2;
 	private var secondCloseStart: Vector2;
 	
-	public function mouseUp(x: Int, y: Int): Void {
+	public function mouseUp(x: Int, y: Int): Int {
 		moving = false;
 		if (lastClass != null) {
 			closing = true;
 			firstCloseStart = new Vector2(first.x, first.y);
 			secondCloseStart = new Vector2(second.x, second.y);
 			time = 0;
+			if (lastClass.getColor() != first.food.color) return 1;
+			else return 0;
 		}
+		else return 0;
 	}
 	
 	public function mouseMove(x: Int, y: Int): Void {

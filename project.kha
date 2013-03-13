@@ -85,6 +85,12 @@
       "name": "memory.xml",
       "scale": 1.0,
       "circle": false
+    },
+    {
+      "id": "c69a1440-8bee-11e2-9e96-0800200c9a66",
+      "type": "blob",
+      "file": "Arial",
+      "name": "Arial"
     }
   ],
   "rooms": [
@@ -102,7 +108,8 @@
         "5d00acfa-5425-44d0-88df-e6408bd681dc",
         "376fa208-8bab-4a20-a8b5-1c3265ace80d",
         "f865fd25-d532-41fc-b792-f20e2fb1989a",
-        "9ea5ce8c-1fc0-4fc4-bd29-cb2688c97eff"
+        "9ea5ce8c-1fc0-4fc4-bd29-cb2688c97eff",
+        "c69a1440-8bee-11e2-9e96-0800200c9a66"
       ]
     }
   ]

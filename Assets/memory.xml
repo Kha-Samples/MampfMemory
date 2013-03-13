@@ -6,26 +6,32 @@
     <Pair>
       <Image>avokado.png</Image>
       <Name></Name>
+      <Health>Green</Health>
     </Pair>
     <Pair>
       <Image>salad.png</Image>
       <Name></Name>
+      <Health>Green</Health>
     </Pair>
     <Pair>
       <Image>cake.png</Image>
       <Name></Name>
+      <Health>Red</Health>
     </Pair>
     <Pair>
       <Image>peas.png</Image>
       <Name></Name>
+      <Health>Yellow</Health>
     </Pair>
     <Pair>
       <Image>cucumber.png</Image>
       <Name></Name>
+      <Health>Yellow</Health>
     </Pair>
     <Pair>
       <Image>steak.png</Image>
       <Name></Name>
+      <Health>Red</Health>
     </Pair>
   </Memory>
 </MemoryGame>

@@ -34,6 +34,10 @@ class ClassPlate {
 		pos = new Vector2();
 	}
 	
+	public function getColor(): MampfColor {
+		return color;
+	}
+	
 	public function setCorrect(correct: Bool) {
 		this.correct = correct;
 	}
