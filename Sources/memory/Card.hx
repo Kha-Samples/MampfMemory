@@ -12,15 +12,19 @@ class Card {
 	public var zoom: Float = 1;
 	public var food: Food;
 	
-	private var back: Image;
 	private var rotation: Float = 0;
 	private var rotations: Int = 0;
+	
+	private static var back: Image;
+	
+	public static function setBack(img: Image): Void {
+		back = img;
+	}
 	
 	public function new(x: Float, y: Float, food: Food) {
 		this.x = x;
 		this.y = y;
 		this.food = food;
-		back = Loader.the.getImage("memory/card_back");
 	}
 	
 	public function update(): Void {

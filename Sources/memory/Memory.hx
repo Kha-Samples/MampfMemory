@@ -44,6 +44,13 @@ class Memory extends Game {
 		for (pair in pairs) {
 			++pairCount;
 		}
+		
+		++pairCount;
+		Loader.the.loadImage(xml.firstElement().elementsNamed("Memory").next().get("img_FrontSide"), function(image: Image) {
+			Card.setBack(image);
+			checkComplete();
+		});
+		
 		pairs = xml.firstElement().elementsNamed("Memory").next().elementsNamed("Pair");
 		for (pair in pairs) {
 			var img = pair.elementsNamed("Image").next();

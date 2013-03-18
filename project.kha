@@ -23,14 +23,6 @@
       "circle": false
     },
     {
-      "id": "8650e27e-83d1-4c2b-ad2b-699c62a58bba",
-      "type": "image",
-      "file": "memory/card_back.png",
-      "name": "memory/card_back",
-      "scale": 1.0,
-      "circle": true
-    },
-    {
       "id": "22c81fe8-d4bd-4981-a4b7-f2e8195b82c1",
       "type": "image",
       "file": "memory/class_green.png",
@@ -101,7 +93,6 @@
       "assets": [
         "cd7bed89-94ee-4406-88b2-5fb648263fe0",
         "8b69f3a5-51ff-4413-a605-a28bd5b0f579",
-        "8650e27e-83d1-4c2b-ad2b-699c62a58bba",
         "22c81fe8-d4bd-4981-a4b7-f2e8195b82c1",
         "ace099eb-5430-47a8-a605-bba819b351f1",
         "c5f56cea-8c00-4140-a1ea-71b7f65f04e2",
