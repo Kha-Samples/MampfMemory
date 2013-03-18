@@ -49,7 +49,7 @@ class Memory extends Game {
 			var img = pair.elementsNamed("Image").next();
 			var filename = img.firstChild().nodeValue;
 			var name = filename.substr(0, filename.length - 4);
-			Loader.the.loadImage("memory/food/" + filename, function(image: Image) {
+			Loader.the.loadImage(filename, function(image: Image) {
 				Food.addImage(name, image);
 				checkComplete();
 			});
