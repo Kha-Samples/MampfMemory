@@ -170,7 +170,7 @@ class Memory extends Game {
 	public function nextRound(): Void {
 		if (dragging) {
 			++round;
-			if (round == pairCount) {
+			if (round == pairCount - 1) {
 				gameover = true;
 			}
 		}
