@@ -5,7 +5,7 @@ import kha.Loader;
 
 class Food {
 	public static var all: Array<Food>;
-	private static var foodImages: Hash<Image> = new Hash<Image>();
+	private static var foodImages: Map<String, Image> = new Map<String, Image>();
 	public var image: Image;
 	public var color: MampfColor;
 	

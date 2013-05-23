@@ -2,7 +2,7 @@ package memory;
 
 import kha.Game;
 import kha.Painter;
-import kha.Vector2;
+import kha.math.Vector2;
 
 class FoodDragger {
 	private var first: Card;

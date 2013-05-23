@@ -3,7 +3,7 @@ package memory;
 import kha.Image;
 import kha.Loader;
 import kha.Painter;
-import kha.Vector2;
+import kha.math.Vector2;
 
 class ClassPlate {
 	private static var width = 200;
@@ -56,12 +56,12 @@ class ClassPlate {
 			case MampfColor.Red:
 				image = red;
 		}
-		painter.drawImage2(image, 0, 0, image.getWidth(), image.getHeight(), pos.x - width / 2, pos.y - height / 2, width, height);
+		painter.drawImage2(image, 0, 0, image.width, image.height, pos.x - width / 2, pos.y - height / 2, width, height);
 		if (shown) {
-			if (correct) painter.drawImage2(right, 0, 0, right.getWidth(), right.getHeight(), pos.x - width / 2, pos.y - height / 2, width, height);
-			else painter.drawImage2(wrong, 0, 0, wrong.getWidth(), wrong.getHeight(), pos.x - width / 2, pos.y - height / 2, width, height);
+			if (correct) painter.drawImage2(right, 0, 0, right.width, right.height, pos.x - width / 2, pos.y - height / 2, width, height);
+			else painter.drawImage2(wrong, 0, 0, wrong.width, wrong.height, pos.x - width / 2, pos.y - height / 2, width, height);
 		}
-		else painter.drawImage2(neutral, 0, 0, neutral.getWidth(), neutral.getHeight(), pos.x - width / 2, pos.y - height / 2, width, height);
+		else painter.drawImage2(neutral, 0, 0, neutral.width, neutral.height, pos.x - width / 2, pos.y - height / 2, width, height);
 	}
 	
 	public function show(): Void {

@@ -8,7 +8,7 @@ import kha.Image;
 import kha.Loader;
 import kha.LoadingScreen;
 import kha.Painter;
-import kha.Random;
+import kha.math.Random;
 
 class Memory extends Game {
 	private var back: Image;
@@ -141,11 +141,11 @@ class Memory extends Game {
 			var y = 0;
 			while (y < height) {
 				painter.drawImage(back, x, y);
-				y += back.getHeight();
+				y += back.height;
 			}
-			x += back.getWidth();
+			x += back.width;
 		}
-		painter.drawImage2(shadow, 0, 0, shadow.getWidth(), shadow.getHeight(), 0, 0, width, height);
+		painter.drawImage2(shadow, 0, 0, shadow.width, shadow.height, 0, 0, width, height);
 		
 		for (card in cards) card.render(painter);
 		dragger.render(painter);
