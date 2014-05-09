@@ -1,6 +1,7 @@
 package memory;
 
 import haxe.Timer;
+import kha.Color;
 import kha.Configuration;
 import kha.FontStyle;
 import kha.Game;
@@ -46,7 +47,7 @@ class Memory extends Game {
 		}
 		
 		++pairCount;
-		Loader.the.loadImage(xml.firstElement().elementsNamed("Memory").next().get("img_FrontSide"), function(image: Image) {
+		Loader.the.loadImage({ file: xml.firstElement().elementsNamed("Memory").next().get("img_FrontSide") }, function(image: Image) {
 			Card.setBack(image);
 			checkComplete();
 		});
@@ -56,7 +57,7 @@ class Memory extends Game {
 			var img = pair.elementsNamed("Image").next();
 			var filename = img.firstChild().nodeValue;
 			var name = filename.substr(0, filename.length - 4);
-			Loader.the.loadImage(filename, function(image: Image) {
+			Loader.the.loadImage({ file: filename }, function(image: Image) {
 				Food.addImage(name, image);
 				checkComplete();
 			});
@@ -136,6 +137,8 @@ class Memory extends Game {
 	}
 	
 	override public function render(painter: Painter): Void {
+		startRender(painter);
+		painter.setColor(Color.White);
 		var x = 0;
 		while (x < width) {
 			var y = 0;
@@ -150,7 +153,7 @@ class Memory extends Game {
 		for (card in cards) card.render(painter);
 		dragger.render(painter);
 		if (gameover) {
-			painter.setColor(255, 255, 255);
+			painter.setColor(Color.fromBytes(255, 255, 255));
 			var font = Loader.the.loadFont("Arial", new FontStyle(false, false, false), 55);
 			painter.setFont(font);
 			painter.drawString("Game Over", width / 2 - font.stringWidth("Game Over") / 2, height / 3 - font.getHeight() / 2);
@@ -158,6 +161,7 @@ class Memory extends Game {
 			var scoreString = "Score: " + Std.string(score);
 			painter.drawString(scoreString, width / 2 - font.stringWidth(scoreString) / 2, height / 2 - font.getHeight() / 2);
 		}
+		endRender(painter);
 	}
 	
 	var clickedCard: Card = null;
