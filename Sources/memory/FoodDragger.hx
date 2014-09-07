@@ -1,7 +1,7 @@
 package memory;
 
 import kha.Game;
-import kha.Painter;
+import kha.graphics2.Graphics;
 import kha.math.Vector2;
 
 class FoodDragger {
@@ -128,14 +128,14 @@ class FoodDragger {
 		if (time >= 1) time = 1;
 	}
 	
-	public function render(painter: Painter): Void {
+	public function render(g: Graphics): Void {
 		if (first == null) return;
 		
-		red.render(painter);
-		yellow.render(painter);
-		green.render(painter);
-		first.render(painter);
-		second.render(painter);
+		red.render(g);
+		yellow.render(g);
+		green.render(g);
+		first.render(g);
+		second.render(g);
 	}
 	
 	private var mx: Float;

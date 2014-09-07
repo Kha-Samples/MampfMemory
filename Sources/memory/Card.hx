@@ -1,8 +1,8 @@
 package memory;
 
+import kha.graphics2.Graphics;
 import kha.Image;
 import kha.Loader;
-import kha.Painter;
 
 class Card {
 	public var x: Float;
@@ -37,12 +37,12 @@ class Card {
 		}
 	}
 	
-	public function render(painter: Painter): Void {
+	public function render(g: Graphics): Void {
 		var image: Image = null;
 		if (rotation > Math.PI * 0.5 && rotation <= Math.PI * 1.5) image = food.image;
 		else image = back;
 		var width = Math.abs(Math.cos(rotation)) * Card.width;
-		painter.drawImage2(image, 0, 0, back.width, back.height, x - width * zoom / 2, y - height * zoom / 2, width * zoom, height * zoom);
+		g.drawScaledSubImage(image, 0, 0, back.width, back.height, x - width * zoom / 2, y - height * zoom / 2, width * zoom, height * zoom);
 	}
 	
 	public function click(): Void {

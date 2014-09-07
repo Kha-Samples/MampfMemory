@@ -1,8 +1,8 @@
 package memory;
 
+import kha.graphics2.Graphics;
 import kha.Image;
 import kha.Loader;
-import kha.Painter;
 import kha.math.Vector2;
 
 class ClassPlate {
@@ -46,7 +46,7 @@ class ClassPlate {
 		
 	}
 	
-	public function render(painter: Painter): Void {
+	public function render(g: Graphics): Void {
 		var image: Image = null;
 		switch (color) {
 			case MampfColor.Green:
@@ -56,12 +56,12 @@ class ClassPlate {
 			case MampfColor.Red:
 				image = red;
 		}
-		painter.drawImage2(image, 0, 0, image.width, image.height, pos.x - width / 2, pos.y - height / 2, width, height);
+		g.drawScaledSubImage(image, 0, 0, image.width, image.height, pos.x - width / 2, pos.y - height / 2, width, height);
 		if (shown) {
-			if (correct) painter.drawImage2(right, 0, 0, right.width, right.height, pos.x - width / 2, pos.y - height / 2, width, height);
-			else painter.drawImage2(wrong, 0, 0, wrong.width, wrong.height, pos.x - width / 2, pos.y - height / 2, width, height);
+			if (correct) g.drawScaledSubImage(right, 0, 0, right.width, right.height, pos.x - width / 2, pos.y - height / 2, width, height);
+			else g.drawScaledSubImage(wrong, 0, 0, wrong.width, wrong.height, pos.x - width / 2, pos.y - height / 2, width, height);
 		}
-		else painter.drawImage2(neutral, 0, 0, neutral.width, neutral.height, pos.x - width / 2, pos.y - height / 2, width, height);
+		else g.drawScaledSubImage(neutral, 0, 0, neutral.width, neutral.height, pos.x - width / 2, pos.y - height / 2, width, height);
 	}
 	
 	public function show(): Void {

@@ -4,14 +4,16 @@ import haxe.Timer;
 import kha.Color;
 import kha.Configuration;
 import kha.FontStyle;
+import kha.Framebuffer;
 import kha.Game;
 import kha.Image;
 import kha.Loader;
 import kha.LoadingScreen;
-import kha.Painter;
 import kha.math.Random;
+import kha.Scaler;
 
 class Memory extends Game {
+	private var backbuffer: Image;
 	private var back: Image;
 	private var shadow: Image;
 	private var cards: Array<Card>;
@@ -25,6 +27,7 @@ class Memory extends Game {
 	}
 	
 	override public function init(): Void {
+		backbuffer = Image.createRenderTarget(1024, 768);
 		Configuration.setScreen(new LoadingScreen());
 		Loader.the.loadRoom("memory", loadingFinished);
 	}
@@ -136,32 +139,37 @@ class Memory extends Game {
 		dragger.update();
 	}
 	
-	override public function render(painter: Painter): Void {
-		startRender(painter);
-		painter.setColor(Color.White);
+	override public function render(frame: Framebuffer): Void {
+		var g = backbuffer.g2;
+		g.begin();
+		g.color = Color.White;
 		var x = 0;
 		while (x < width) {
 			var y = 0;
 			while (y < height) {
-				painter.drawImage(back, x, y);
+				g.drawImage(back, x, y);
 				y += back.height;
 			}
 			x += back.width;
 		}
-		painter.drawImage2(shadow, 0, 0, shadow.width, shadow.height, 0, 0, width, height);
+		g.drawScaledSubImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, width, height);
 		
-		for (card in cards) card.render(painter);
-		dragger.render(painter);
+		for (card in cards) card.render(g);
+		dragger.render(g);
 		if (gameover) {
-			painter.setColor(Color.fromBytes(255, 255, 255));
+			g.color = Color.White;
 			var font = Loader.the.loadFont("Arial", new FontStyle(false, false, false), 55);
-			painter.setFont(font);
-			painter.drawString("Game Over", width / 2 - font.stringWidth("Game Over") / 2, height / 3 - font.getHeight() / 2);
+			g.font = font;
+			g.drawString("Game Over", width / 2 - font.stringWidth("Game Over") / 2, height / 3 - font.getHeight() / 2);
 			var score = pairCount * 10 - errors * 1 - healthErrors * 2;
 			var scoreString = "Score: " + Std.string(score);
-			painter.drawString(scoreString, width / 2 - font.stringWidth(scoreString) / 2, height / 2 - font.getHeight() / 2);
+			g.drawString(scoreString, width / 2 - font.stringWidth(scoreString) / 2, height / 2 - font.getHeight() / 2);
 		}
-		endRender(painter);
+		g.end();
+		
+		startRender(frame);
+		Scaler.scale(backbuffer, frame, kha.Sys.screenRotation);
+		endRender(frame);
 	}
 	
 	var clickedCard: Card = null;
