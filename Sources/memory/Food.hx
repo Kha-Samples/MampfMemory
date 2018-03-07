@@ -1,7 +1,7 @@
 package memory;
 
+import kha.Assets;
 import kha.Image;
-import kha.Loader;
 
 class Food {
 	public static var all: Array<Food>;
@@ -20,11 +20,10 @@ class Food {
 	
 	public static function cook(): Void {
 		all = new Array<Food>();
-		var xml = Xml.parse(Loader.the.getBlob("memory.xml").toString());
+		var xml = Xml.parse(Assets.blobs.memory_xml.toString());
 		for (pair in xml.firstElement().elementsNamed("Memory").next().elementsNamed("Pair")) {
 			var img = pair.elementsNamed("Image").next();
 			var name = img.firstChild().nodeValue;
-			name = name.substr(0, name.length - 4);
 			var health = pair.elementsNamed("Health").next().firstChild().nodeValue;
 			var color: MampfColor;
 			if (health == "Green") color = MampfColor.Green;

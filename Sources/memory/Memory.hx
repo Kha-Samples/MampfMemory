@@ -1,18 +1,17 @@
 package memory;
 
 import haxe.Timer;
+import kha.Assets;
 import kha.Color;
-import kha.Configuration;
-import kha.FontStyle;
 import kha.Framebuffer;
-import kha.Game;
 import kha.Image;
-import kha.Loader;
-import kha.LoadingScreen;
+import kha.input.Mouse;
 import kha.math.Random;
 import kha.Scaler;
+import kha.Scheduler;
+import kha.System;
 
-class Memory extends Game {
+class Memory {
 	private var backbuffer: Image;
 	private var back: Image;
 	private var shadow: Image;
@@ -23,48 +22,33 @@ class Memory extends Game {
 	private var round: Int = 0;
 	
 	public function new() {
-		super("Memory", false);
-	}
-	
-	override public function init(): Void {
-		backbuffer = Image.createRenderTarget(1024, 768);
-		Configuration.setScreen(new LoadingScreen());
-		Loader.the.loadRoom("memory", loadingFinished);
+		System.init({width: 1024, height: 768, title: "Mampf Memory"}, function () {
+			backbuffer = Image.createRenderTarget(1024, 768);
+			Assets.loadEverything(loadingFinished);
+		});
 	}
 	
 	private var pairCount: Int;
-	private var completeCount: Int;
-	
-	private function checkComplete(): Void {
-		++completeCount;
-		if (completeCount == pairCount) loadingFinished2();
-	}
 	
 	private function loadingFinished(): Void {
-		var xml = Xml.parse(Loader.the.getBlob("memory.xml").toString());
+		var xml = Xml.parse(Assets.blobs.memory_xml.toString());
 		var pairs = xml.firstElement().elementsNamed("Memory").next().elementsNamed("Pair");
+
 		pairCount = 0;
-		completeCount = 0;
 		for (pair in pairs) {
 			++pairCount;
 		}
 		
 		++pairCount;
-		Loader.the.loadImage({ file: xml.firstElement().elementsNamed("Memory").next().get("img_FrontSide") }, function(image: Image) {
-			Card.setBack(image);
-			checkComplete();
-		});
+		Card.setBack(Assets.images.card_back);
 		
 		pairs = xml.firstElement().elementsNamed("Memory").next().elementsNamed("Pair");
 		for (pair in pairs) {
 			var img = pair.elementsNamed("Image").next();
-			var filename = img.firstChild().nodeValue;
-			var name = filename.substr(0, filename.length - 4);
-			Loader.the.loadImage({ file: filename }, function(image: Image) {
-				Food.addImage(name, image);
-				checkComplete();
-			});
+			var name = img.firstChild().nodeValue;
+			Food.addImage(name, Assets.images.get(name));
 		}
+		loadingFinished2();
 	}
 	
 	private var rows: Int;
@@ -73,14 +57,14 @@ class Memory extends Game {
 	
 	private function loadingFinished2(): Void {	
 		Random.init(Std.int(Timer.stamp() * 1000));
-		back = Loader.the.getImage("memory/bg_pattern");
-		shadow = Loader.the.getImage("memory/shadow");
-		dragger = new FoodDragger();
+		back = Assets.images.bg_pattern;
+		shadow = Assets.images.shadow;
+		dragger = new FoodDragger(this);
 		Food.cook();
 		ClassPlate.init();
 		cards = new Array<Card>();
 		
-		var xml = Xml.parse(Loader.the.getBlob("memory.xml").toString());
+		var xml = Xml.parse(Assets.blobs.memory_xml.toString());
 		var memoElement = xml.firstElement().elementsNamed("Memory").next();
 		
 		rows = Std.parseInt(memoElement.get("rows"));
@@ -89,8 +73,9 @@ class Memory extends Game {
 		
 		layCards();
 		
-		setInstance();
-		Configuration.setScreen(this);
+		System.notifyOnRender(render);
+		Scheduler.addTimeTask(update, 0, 1 / 60);
+		Mouse.get().notify(mouseDown, mouseUp, mouseMove, null);
 	}
 	
 	private function layCards(): Void {
@@ -105,9 +90,9 @@ class Memory extends Game {
 		}
 		
 		for (xcount in 0...columns) {
-			var x = 100 + xcount * width / columns;
+			var x = 100 + xcount * System.windowWidth() / columns;
 			for (ycount in 0...rows) {
-				var y = 100 + ycount * height / rows;
+				var y = 100 + ycount * System.windowHeight() / rows;
 				var xx = x + Random.getUpTo(40) - 20;
 				var yy = y + Random.getUpTo(40) - 20;
 				var food = foodPile[Random.getUpTo(foodPile.length - 1)];
@@ -125,7 +110,7 @@ class Memory extends Game {
 		layCards();
 	}
 	
-	override public function update(): Void {
+	function update(): Void {
 		if (waiting > 0) {
 			--waiting;
 			if (waiting <= 0) {
@@ -139,37 +124,39 @@ class Memory extends Game {
 		dragger.update();
 	}
 	
-	override public function render(frame: Framebuffer): Void {
+	function render(frame: Framebuffer): Void {
 		var g = backbuffer.g2;
 		g.begin();
 		g.color = Color.White;
 		var x = 0;
-		while (x < width) {
+		while (x < System.windowWidth()) {
 			var y = 0;
-			while (y < height) {
+			while (y < System.windowHeight()) {
 				g.drawImage(back, x, y);
 				y += back.height;
 			}
 			x += back.width;
 		}
-		g.drawScaledSubImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, width, height);
+		g.drawScaledSubImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, System.windowWidth(), System.windowHeight());
 		
 		for (card in cards) card.render(g);
 		dragger.render(g);
 		if (gameover) {
 			g.color = Color.White;
-			var font = Loader.the.loadFont("Arial", new FontStyle(false, false, false), 55);
+			var font = Assets.fonts.arial;
+			var fontSize = 55;
 			g.font = font;
-			g.drawString("Game Over", width / 2 - font.stringWidth("Game Over") / 2, height / 3 - font.getHeight() / 2);
+			g.fontSize = fontSize;
+			g.drawString("Game Over", System.windowWidth() / 2 - font.width(fontSize, "Game Over") / 2, System.windowHeight() / 3 - font.height(fontSize) / 2);
 			var score = pairCount * 10 - errors * 1 - healthErrors * 2;
 			var scoreString = "Score: " + Std.string(score);
-			g.drawString(scoreString, width / 2 - font.stringWidth(scoreString) / 2, height / 2 - font.getHeight() / 2);
+			g.drawString(scoreString, System.windowWidth() / 2 - font.width(fontSize, scoreString) / 2, System.windowHeight() / 2 - font.height(fontSize) / 2);
 		}
 		g.end();
 		
-		startRender(frame);
-		Scaler.scale(backbuffer, frame, kha.Sys.screenRotation);
-		endRender(frame);
+		frame.g2.begin();
+		Scaler.scale(backbuffer, frame, System.screenRotation);
+		frame.g2.end();
 	}
 	
 	var clickedCard: Card = null;
@@ -189,7 +176,7 @@ class Memory extends Game {
 		dragging = false;
 	}
 	
-	override public function mouseDown(x: Int, y: Int): Void {
+	function mouseDown(button: Int, x: Int, y: Int): Void {
 		if (gameover) {
 			reset();
 			gameover = false;
@@ -208,7 +195,7 @@ class Memory extends Game {
 		}
 	}
 	
-	override public function mouseUp(x: Int, y: Int): Void {
+	function mouseUp(button: Int, x: Int, y: Int): Void {
 		if (gameover) return;
 		if (dragging) {
 			healthErrors += dragger.mouseUp(x, y);
@@ -244,7 +231,7 @@ class Memory extends Game {
 		}
 	}
 	
-	override public function mouseMove(x: Int, y: Int): Void {
+	function mouseMove(x: Int, y: Int, mx: Int, my: Int): Void {
 		if (gameover) return;
 		if (dragging) {
 			dragger.mouseMove(x, y);

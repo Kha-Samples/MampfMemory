@@ -2,7 +2,6 @@ package memory;
 
 import kha.graphics2.Graphics;
 import kha.Image;
-import kha.Loader;
 
 class Card {
 	public var x: Float;

@@ -1,8 +1,8 @@
 package memory;
 
+import kha.Assets;
 import kha.graphics2.Graphics;
 import kha.Image;
-import kha.Loader;
 import kha.math.Vector2;
 
 class ClassPlate {
@@ -21,12 +21,12 @@ class ClassPlate {
 	public var pos: Vector2;
 	
 	public static function init(): Void {
-		green   = Loader.the.getImage("memory/class_green");
-		yellow  = Loader.the.getImage("memory/class_yellow");
-		red     = Loader.the.getImage("memory/class_red");
-		neutral = Loader.the.getImage("memory/class_neutral");
-		right   = Loader.the.getImage("memory/class_right");
-		wrong   = Loader.the.getImage("memory/class_wrong");
+		green   = Assets.images.class_green;
+		yellow  = Assets.images.class_yellow;
+		red     = Assets.images.class_red;
+		neutral = Assets.images.class_neutral;
+		right   = Assets.images.class_right;
+		wrong   = Assets.images.class_wrong;
 	}
 	
 	public function new(color: MampfColor) {

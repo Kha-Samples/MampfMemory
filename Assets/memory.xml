@@ -2,34 +2,34 @@
   <Background name="Background31" img="background_game.png" />
   <Button name="Continue-Button41" img="button_forward.png" imgMouseOver="button_forward-mouseover.png" />
   <TextField name="Title91" color="#FF3399D2" imgBackground="" margin="0">Finde die Paare...</TextField>
-  <Memory name="Memory11" img_FlipSide="karte_bg-rueckseite.png" img_FrontSide="card_back.png" text="Click to turn card over!" rows="3" column="4">
+  <Memory name="Memory11" img_FlipSide="karte_bg-rueckseite.png" text="Click to turn card over!" rows="3" column="4">
     <Pair>
-      <Image>avokado.png</Image>
+      <Image>avokado</Image>
       <Name></Name>
       <Health>Green</Health>
     </Pair>
     <Pair>
-      <Image>salad.png</Image>
+      <Image>salad</Image>
       <Name></Name>
       <Health>Green</Health>
     </Pair>
     <Pair>
-      <Image>cake.png</Image>
+      <Image>cake</Image>
       <Name></Name>
       <Health>Red</Health>
     </Pair>
     <Pair>
-      <Image>peas.png</Image>
+      <Image>peas</Image>
       <Name></Name>
       <Health>Yellow</Health>
     </Pair>
     <Pair>
-      <Image>cucumber.png</Image>
+      <Image>cucumber</Image>
       <Name></Name>
       <Health>Yellow</Health>
     </Pair>
     <Pair>
-      <Image>steak.png</Image>
+      <Image>steak</Image>
       <Name></Name>
       <Health>Red</Health>
     </Pair>

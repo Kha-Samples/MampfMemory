@@ -1,10 +1,10 @@
 package memory;
 
-import kha.Game;
 import kha.graphics2.Graphics;
 import kha.math.Vector2;
 
 class FoodDragger {
+	private var game: Memory;
 	private var first: Card;
 	private var second: Card;
 	private var aim1: Vector2;
@@ -23,7 +23,8 @@ class FoodDragger {
 	private var yellowAim: Vector2;
 	private var redAim: Vector2;
 	
-	public function new() {
+	public function new(game: Memory) {
+		this.game = game;
 		aim1 = new Vector2(450, 300);
 		aim2 = new Vector2(550, 400);
 		offset = new Vector2();
@@ -98,7 +99,7 @@ class FoodDragger {
 			time += 0.02;
 			if (time >= 1) {
 				time = 1;
-				cast(Game.the, Memory).nextRound();
+				game.nextRound();
 			}
 			return;
 		}
