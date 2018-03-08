@@ -93,9 +93,9 @@ class Memory {
 		}
 		
 		for (xcount in 0...columns) {
-			var x = 100 + xcount * System.windowWidth() / columns;
+			var x = 100 + xcount * width / columns;
 			for (ycount in 0...rows) {
-				var y = 100 + ycount * System.windowHeight() / rows;
+				var y = 100 + ycount * height / rows;
 				var xx = x + Random.getUpTo(40) - 20;
 				var yy = y + Random.getUpTo(40) - 20;
 				var food = foodPile[Random.getUpTo(foodPile.length - 1)];
