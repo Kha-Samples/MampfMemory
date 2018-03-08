@@ -9,6 +9,7 @@ import kha.input.Mouse;
 import kha.math.Random;
 import kha.Scaler;
 import kha.Scheduler;
+import kha.ScreenCanvas;
 import kha.System;
 
 class Memory {
@@ -20,10 +21,12 @@ class Memory {
 	private var errors: Int = 0;
 	private var healthErrors: Int = 0;
 	private var round: Int = 0;
+	private static inline var width = 1024;
+	private static inline var height = 768;
 	
 	public function new() {
-		System.init({width: 1024, height: 768, title: "Mampf Memory"}, function () {
-			backbuffer = Image.createRenderTarget(1024, 768);
+		System.init({width: width, height: height, title: "Mampf Memory"}, function () {
+			backbuffer = Image.createRenderTarget(width, height);
 			Assets.loadEverything(loadingFinished);
 		});
 	}
@@ -129,15 +132,15 @@ class Memory {
 		g.begin();
 		g.color = Color.White;
 		var x = 0;
-		while (x < System.windowWidth()) {
+		while (x < width) {
 			var y = 0;
-			while (y < System.windowHeight()) {
+			while (y < height) {
 				g.drawImage(back, x, y);
 				y += back.height;
 			}
 			x += back.width;
 		}
-		g.drawScaledSubImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, System.windowWidth(), System.windowHeight());
+		g.drawScaledSubImage(shadow, 0, 0, shadow.width, shadow.height, 0, 0, width, height);
 		
 		for (card in cards) card.render(g);
 		dragger.render(g);
@@ -147,10 +150,10 @@ class Memory {
 			var fontSize = 55;
 			g.font = font;
 			g.fontSize = fontSize;
-			g.drawString("Game Over", System.windowWidth() / 2 - font.width(fontSize, "Game Over") / 2, System.windowHeight() / 3 - font.height(fontSize) / 2);
+			g.drawString("Game Over", width / 2 - font.width(fontSize, "Game Over") / 2, height / 3 - font.height(fontSize) / 2);
 			var score = pairCount * 10 - errors * 1 - healthErrors * 2;
 			var scoreString = "Score: " + Std.string(score);
-			g.drawString(scoreString, System.windowWidth() / 2 - font.width(fontSize, scoreString) / 2, System.windowHeight() / 2 - font.height(fontSize) / 2);
+			g.drawString(scoreString, width / 2 - font.width(fontSize, scoreString) / 2, height / 2 - font.height(fontSize) / 2);
 		}
 		g.end();
 		
@@ -176,12 +179,14 @@ class Memory {
 		dragging = false;
 	}
 	
-	function mouseDown(button: Int, x: Int, y: Int): Void {
+	function mouseDown(button: Int, ox: Int, oy: Int): Void {
 		if (gameover) {
 			reset();
 			gameover = false;
 			return;
 		}
+		var x = Scaler.transformX(ox, oy, backbuffer, ScreenCanvas.the, System.screenRotation);
+		var y = Scaler.transformY(ox, oy, backbuffer, ScreenCanvas.the, System.screenRotation);
 		if (dragging) {
 			dragger.mouseDown(x, y);
 			return;
@@ -195,8 +200,10 @@ class Memory {
 		}
 	}
 	
-	function mouseUp(button: Int, x: Int, y: Int): Void {
+	function mouseUp(button: Int, ox: Int, oy: Int): Void {
 		if (gameover) return;
+		var x = Scaler.transformX(ox, oy, backbuffer, ScreenCanvas.the, System.screenRotation);
+		var y = Scaler.transformY(ox, oy, backbuffer, ScreenCanvas.the, System.screenRotation);
 		if (dragging) {
 			healthErrors += dragger.mouseUp(x, y);
 			return;
@@ -204,7 +211,7 @@ class Memory {
 		if (waiting > 0) return;
 		for (card in cards) {
 			if (x >= card.x - Card.width / 2 && x <= card.x + Card.width / 2 && y >= card.y - Card.height / 2 && y <= card.y + Card.height / 2) {
-				if (clickedCard == card) {
+				if (clickedCard == card && clickedCard != firstCard) {
 					card.click();
 					clickedCard = null;
 					
@@ -234,7 +241,7 @@ class Memory {
 	function mouseMove(x: Int, y: Int, mx: Int, my: Int): Void {
 		if (gameover) return;
 		if (dragging) {
-			dragger.mouseMove(x, y);
+			dragger.mouseMove(Scaler.transformX(x, y, backbuffer, ScreenCanvas.the, System.screenRotation), Scaler.transformY(x, y, backbuffer, ScreenCanvas.the, System.screenRotation));
 			return;
 		}
 	}
