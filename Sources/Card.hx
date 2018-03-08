@@ -1,4 +1,4 @@
-package memory;
+package;
 
 import kha.graphics2.Graphics;
 import kha.Image;

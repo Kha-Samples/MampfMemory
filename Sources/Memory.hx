@@ -1,4 +1,4 @@
-package memory;
+package;
 
 import haxe.Timer;
 import kha.Assets;
