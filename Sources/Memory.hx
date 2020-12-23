@@ -25,7 +25,7 @@ class Memory {
 	private static inline var height = 768;
 	
 	public function new() {
-		System.init({width: width, height: height, title: "Mampf Memory"}, function () {
+		System.start({width: width, height: height, title: "Mampf Memory"}, (window) -> {
 			backbuffer = Image.createRenderTarget(width, height);
 			Assets.loadEverything(loadingFinished);
 		});
@@ -76,7 +76,7 @@ class Memory {
 		
 		layCards();
 		
-		System.notifyOnRender(render);
+		System.notifyOnFrames(render);
 		Scheduler.addTimeTask(update, 0, 1 / 60);
 		Mouse.get().notify(mouseDown, mouseUp, mouseMove, null);
 	}
@@ -127,7 +127,8 @@ class Memory {
 		dragger.update();
 	}
 	
-	function render(frame: Framebuffer): Void {
+	function render(frames: Array<Framebuffer>): Void {
+		var frame = frames[0];
 		var g = backbuffer.g2;
 		g.begin();
 		g.color = Color.White;
